@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,10 +13,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import type { ClassItem, CategoryItem } from "../pages/student-dashboard.tsx";
+import type { ClassItem, CategoryItem, GradeItem } from "../pages/student-dashboard.tsx";
 import { GradeCategory } from "../components/grade-category.tsx";
 import { EditSyllabusModal } from "./edit-syllabus-modal.tsx";
-import { GradeCalculations } from "@/utils/grade-calculations.tsx";
+import { GradeCalculations, LetterGradeCalculations, OptimisticGradeCalculations, OptimisticLetterGradeCalculations, PessimisticGradeCalculations, PessimisticLetterGradeCalculations } from "@/utils/grade-calculations.tsx";
 
 interface EditClassModalProps {
   classLength: number;
@@ -41,16 +41,44 @@ export function EditClassModal({
     categories: classInfo?.categories || [],
     professorName: classInfo?.professorName || "",
     currentGrade: classInfo?.currentGrade || 0,
+    letterGrade: classInfo?.letterGrade || "",
     predictedOptimistic: classInfo?.predictedOptimistic || 0,
+    predictedOptimisticLetterGrade: classInfo?.predictedOptimisticLetterGrade || "",
     predictedPessimistic: classInfo?.predictedPessimistic || 0,
+    predictedPessimisticLetterGrade: classInfo?.predictedPessimisticLetterGrade || "",
     gradingScheme: classInfo?.gradingScheme || {},
   });
-  const [newCategory, setNewCategory] = useState<CategoryItem>({
-    title: "",
-    average: 0,
-    weight: 0,
-    items: [],
-  });
+  
+  const [newCategory, setNewCategory] = useState<{
+      title: string;
+      average: number;
+      weight: number;
+      items: GradeItem[];
+    }>({
+      title: "",
+      average: 0,
+      weight: 0,
+      items: [],
+    });
+  useEffect(() => {
+    if (classInfo) {
+      setClassDetails({
+        id: classInfo.id,
+        credits: classInfo.credits || 0,
+        className: classInfo.className || "",
+        categories: classInfo.categories || [],
+        professorName: classInfo.professorName || "",
+        currentGrade: classInfo.currentGrade || 0,
+        letterGrade: classInfo?.letterGrade || "",
+        predictedOptimistic: classInfo?.predictedOptimistic || 0,
+        predictedOptimisticLetterGrade: classInfo?.predictedOptimisticLetterGrade || "",
+        predictedPessimistic: classInfo?.predictedPessimistic || 0,
+        predictedPessimisticLetterGrade: classInfo?.predictedPessimisticLetterGrade || "",
+        gradingScheme: classInfo.gradingScheme || {},
+      });
+    }
+  }, [classInfo]);
+
   const handleChange = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     setClassDetails((prevData) => ({
@@ -58,19 +86,44 @@ export function EditClassModal({
       [name]: value,
     }));
   };
-  const handleGradeChange = () => {
-    const grades = GradeCalculations(classDetails);
-    classInfo.currentGrade = grades;
-    console.log("Class Grade: ", classInfo.currentGrade);
-  };
-  const handleUpdateCategory = (updatedCategory: CategoryItem) => {
-    setClassDetails((prevData) => ({
-      ...prevData,
-      categories: prevData.categories.map((cat) =>
-        cat.title === updatedCategory.title ? updatedCategory : cat
-      ),
-    }));
-  };
+  const handleUpdateCategory = useCallback((updatedCategory: CategoryItem) => {
+    setClassDetails((prevData) => {
+      const index = prevData.categories.findIndex(
+        (cat) => cat.id === updatedCategory.id
+      );
+      if (index === -1) {
+        return prevData;
+      }
+      const updatedCategories = [...prevData.categories];
+      updatedCategories[index] = updatedCategory;
+      return {
+        ...prevData,
+        categories: updatedCategories,
+      };
+    });
+  }, []);
+  useEffect(() => {
+    if (classDetails.categories.length > 0) {
+      const grades = GradeCalculations(classDetails);
+      const optimisticGrades = OptimisticGradeCalculations(classDetails);
+      const pessimisticGrades = PessimisticGradeCalculations(classDetails);
+      const letterGrade = LetterGradeCalculations(classDetails);
+      const optimisticLetterGrade = OptimisticLetterGradeCalculations(classDetails);
+      console.log("Optimistic class letter grade: ", optimisticLetterGrade)
+      const pessimisticLetterGrade = PessimisticLetterGradeCalculations(classDetails);
+      console.log("Pessimistic class letter grade: ", pessimisticLetterGrade)
+      setClassDetails((prev) => ({
+        ...prev,
+        currentGrade: grades,
+        predictedOptimistic: optimisticGrades,
+        predictedPessimistic: pessimisticGrades,
+        letterGrade: letterGrade,
+        predictedOptimisticLetterGrade: optimisticLetterGrade,
+        predictedPessimisticLetterGrade: pessimisticLetterGrade
+      }));
+    }
+  }, [classDetails.categories]);
+
   const fetchCategories = async () => {
     try {
       const response = await fetch(
@@ -90,52 +143,39 @@ export function EditClassModal({
   };
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const updateClass = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/classes/${classInfo.id}/update`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(classDetails),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const result = await response.json();
-      onUpdateClass(result);
-    } catch (error) {
-      console.error("Error adding/updating student:", error);
+    if (open) {
+      fetchCategories();
     }
+  }, [open]);
+
+  const updateClass = () => {
+    return fetch(`http://localhost:8080/api/classes/${classInfo.id}/update`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(classDetails),
+    }).then(response => {
+      if (!response.ok) throw new Error("Failed to update class");
+      return response.json();
+    });
   };
 
-  const updateCategories = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/gradeCategory/${classInfo.id}/update`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(classDetails.categories),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-    } catch (error) {
-      console.error("Error adding/updating student:", error);
-    }
+  const updateCategories = () => {
+    return fetch(`http://localhost:8080/api/gradeCategory/${classInfo.id}/update`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(classDetails.categories),
+    }).then(response => {
+      if (!response.ok) throw new Error("Failed to update categories");
+      return response.json();
+    });
   };
+  
   const addGradeCategory = async () => {
+    if (!newCategory.title || newCategory.weight <= 0) {
+      alert("Please enter a valid category title and weight");
+      return;
+    }
+    
     try {
       const response = await fetch(
         `http://localhost:8080/api/addGradeCategory/${classInfo.id}`,
@@ -158,10 +198,11 @@ export function EditClassModal({
       setNewCategory({ title: "", average: 0, weight: 0, items: [] });
       setIsAddCategoryModalOpen(false);
     } catch (error) {
-      console.error("Error adding/updating student:", error);
+      console.error("Error adding grade category:", error);
     }
   };
-  const handleSubmit = (e: any) => {
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
       !classDetails.className ||
@@ -171,11 +212,19 @@ export function EditClassModal({
       alert("Please fill out all required fields.");
       return;
     }
-    handleGradeChange();
-    updateClass();
-    updateCategories();
+    let totalWeight = classDetails.categories.reduce(
+      (sum, category) => sum + (Number(category.weight) || 0),
+      0
+    );
+    if (totalWeight !== 100) {
+      alert("The total weight of all categories must add up to 100%.");
+      return; 
+    }
+    await Promise.all([updateClass(), updateCategories()]);
+    onUpdateClass(classDetails);
     onOpenChange(false);
   };
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -195,7 +244,7 @@ export function EditClassModal({
               <Input
                 id="className"
                 name="className"
-                defaultValue={classDetails.className}
+                value={classDetails.className}
                 onChange={handleChange}
               />
             </div>
@@ -204,7 +253,7 @@ export function EditClassModal({
               <Input
                 id="professorName"
                 name="professorName"
-                defaultValue={classDetails.professorName}
+                value={classDetails.professorName}
                 onChange={handleChange}
               />
             </div>
@@ -216,12 +265,12 @@ export function EditClassModal({
                 type="number"
                 min={0}
                 max={12}
-                defaultValue={classDetails.credits || ""}
+                value={classDetails.credits || ""}
                 onChange={handleChange}
               />
             </div>
             <div className="grid gap-2">
-              <Label>Edit Syllabus</Label>
+              <Label>Current Grade: {classDetails.currentGrade.toFixed(2)}%</Label>
               <Button
                 variant="outline"
                 onClick={() => setIsSyllabusModalOpen(true)}
@@ -237,12 +286,10 @@ export function EditClassModal({
         <div className="space-y-4">
           {classDetails.categories.map((category, index) => (
             <GradeCategory
-              key={index}
-              title={category.title}
-              weight={category.weight}
-              average={category.average}
-              items={category.items}
+              key={`${category.id}-${index}`}
+              categoryInfo={category}
               onUpdate={handleUpdateCategory}
+              onDelete={fetchCategories}
             />
           ))}
           <div className="pt-2">

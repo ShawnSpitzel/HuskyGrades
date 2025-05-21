@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -23,7 +23,7 @@ import { EditClassModal } from "../modals/edit-class-modal"
 interface ClassesTableProps {
   classes: ClassItem[]
   onAddClass: (newClass: any) => void
-  onDeleteClass?: (classId: number) => void
+  onDeleteClass?: () => void
   onUpdateClass?: (updatedClass: ClassItem) => void
 }
 
@@ -37,16 +37,14 @@ export function ClassesTable({
   const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [classToDelete, setClassToDelete] = useState<number | null>(null)
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
   const classesPerPage = 5
   const totalPages = Math.ceil(classes.length / classesPerPage)
-
  const handleClassSelect = (cls: ClassItem | null) => {
     setSelectedClass(cls)
   
  }
+
   const handleConfirmDelete = async () => {
     if (classToDelete !== null) {
     try {
@@ -63,7 +61,7 @@ export function ClassesTable({
     } catch (error) {
       console.error("Error deleting student:", error)
     }
-    onDeleteClass(classToDelete)
+    onDeleteClass()
     setClassToDelete(null)
     setDeleteConfirmOpen(false)
     }
@@ -75,16 +73,11 @@ export function ClassesTable({
 
   const handleClassUpdate = (updatedClass: ClassItem) => {
     onUpdateClass(updatedClass)
-    setSelectedClass(null)
   }
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
   }
-
-//   // Paginated classes
-//   const startIndex = (currentPage - 1) * classesPerPage
-//   const paginatedClasses = classes.slice(startIndex, startIndex + classesPerPage)
 
   return (
     <>
@@ -112,6 +105,7 @@ export function ClassesTable({
                 <TableHead>Class Name</TableHead>
                 <TableHead>Professor</TableHead>
                 <TableHead className="text-center">Credits</TableHead>
+                <TableHead className="text-center">Letter Grade</TableHead>
                 <TableHead className="text-center">Current Grade</TableHead>
                 <TableHead className="text-center">Optimistic</TableHead>
                 <TableHead className="text-center">Pessimistic</TableHead>
@@ -119,51 +113,82 @@ export function ClassesTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {classes.map((cls:ClassItem) => (
-                <TableRow key={cls.id}>
-                  <TableCell className="font-medium py-5">{cls.className}</TableCell>
-                  <TableCell>{cls.professorName}</TableCell>
-                  <TableCell className="text-center">{cls.credits}</TableCell>
-                  <TableCell className="text-center">
-                    <Badge variant="outline" className="font-bold">
-                      {cls.currentGrade ? Number(cls.currentGrade) : 0}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Badge variant="outline" className="bg-emerald-50 text-emerald-700 font-bold">
-                      {cls.predictedOptimistic ? Number(cls.predictedOptimistic) : 0}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Badge variant="outline" className="bg-amber-50 text-amber-700 font-bold">
-                      {cls.predictedPessimistic ? Number(cls.predictedPessimistic) : 0}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" onClick={() => handleClassSelect(cls)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit Content
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-500"
-                        onClick={() => handleDeleteClick(cls.id)}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
+              {classes.map((cls: ClassItem) => (
+              <TableRow key={cls.id}>
+                <TableCell className="font-medium py-5">{cls.className}</TableCell>
+                <TableCell>{cls.professorName}</TableCell>
+                <TableCell className="text-center">{cls.credits}</TableCell>
+                <TableCell className="text-center">
+                <Badge
+                  variant="outline"
+                  className="font-bold"
+                  style={{
+                  backgroundColor: cls.letterGrade
+                    ? cls.letterGrade === "A"
+                    ? "rgba(16, 185, 129, 0.7)"
+                    : cls.letterGrade === "A-"
+                    ? "rgba(52, 211, 153, 0.7)" 
+                    : cls.letterGrade === "B+"
+                    ? "rgba(110, 231, 183, 0.7)"
+                    : cls.letterGrade === "B"
+                    ? "rgba(245, 158, 11, 0.7)"
+                    : cls.letterGrade === "B-"
+                    ? "rgba(251, 191, 36, 0.7)"
+                    : cls.letterGrade === "C+"
+                    ? "rgba(252, 211, 77, 0.7)"
+                    : cls.letterGrade === "C"
+                    ? "rgba(253, 230, 138, 0.7)"
+                    : cls.letterGrade === "C-"
+                    ? "rgba(254, 226, 226, 0.7)"
+                    : "rgba(239, 68, 68, 0.7)"
+                    : "transparent",
+                  color: cls.letterGrade ? "#000" : "#6b7280", 
+                  }}
+                >
+                  {cls.letterGrade || "N/A"}
+                </Badge>
+                </TableCell>
+                <TableCell className="text-center">
+                <Badge variant="outline" className="font-bold">
+                  {cls.currentGrade ? Number(cls.currentGrade.toFixed(0)) : 0}
+                </Badge>
+                </TableCell>
+
+                <TableCell className="text-center">
+                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 font-bold">
+                  {cls.predictedOptimistic ? Number(cls.predictedOptimistic) : 0}
+                </Badge>
+                </TableCell>
+                <TableCell className="text-center">
+                <Badge variant="outline" className="bg-amber-50 text-amber-700 font-bold">
+                  {cls.predictedPessimistic ? Number(cls.predictedPessimistic) : 0}
+                </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" size="sm" onClick={() => handleClassSelect(cls)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Content
+                  </Button>
+                  <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-500"
+                  onClick={() => handleDeleteClick(cls.id)}
+                  >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                  </Button>
+                </div>
+                </TableCell>
+              </TableRow>
               ))}
             </TableBody>
           </Table>
           {/* Pagination Controls */}
           <div className="flex flex-col items-center justify-center mt-4 gap-2">
             <span className="text-sm text-gray-500">
-              Showing {classes.length} out of 12 classes
+            Showing {classes.length} out of 12 classes
             </span>
             <div className="flex gap-2">
               {Array.from({ length: totalPages }, (_, index) => (
