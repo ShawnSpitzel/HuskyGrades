@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Plus, Edit, ChevronDown, ChevronUp, Trash2 } from "lucide-react"
+import { Edit, ChevronDown, ChevronUp, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -116,15 +116,15 @@ export function GradeCategory({ categoryInfo, onUpdate, onDelete}: GradeCategory
     setSelectedItem(item);
     setEditMode(true);
   };
-
-  const handleAddItem = () => {
-    const newItem: GradeItem = {
-      name: "",
-      grade: 0,
-    };
-    setSelectedItem(newItem);
-    setEditMode(false);
-  };
+// Function to handle adding singular item
+  // const handleAddItem = () => {
+  //   const newItem: GradeItem = {
+  //     name: "",
+  //     grade: 0,
+  //   };
+  //   setSelectedItem(newItem);
+  //   setEditMode(false);
+  // };
 
   const updateGradeItems = async (updatedItems: GradeItem[]) => {
     try {
