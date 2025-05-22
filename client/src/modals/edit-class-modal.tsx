@@ -125,10 +125,6 @@ export function EditClassModal({
       const letterGrade = LetterGradeCalculations(tempClassDetailsForCurrent);
       const optimisticLetterGrade = OptimisticLetterGradeCalculations(tempClassDetailsForOptimistic);
       const pessimisticLetterGrade = PessimisticLetterGradeCalculations(tempClassDetailsForPessimistic);
-      
-      console.log("Optimistic class letter grade: ", optimisticLetterGrade);
-      console.log("Pessimistic class letter grade: ", pessimisticLetterGrade);
-      
       setClassDetails((prev) => ({
         ...prev,
         currentGrade: grades,
