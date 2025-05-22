@@ -1,6 +1,4 @@
-import { CategoryItem, ClassItem, UserProfile } from '@/pages/student-dashboard';
-import { range } from 'lodash';
-import React, { useState } from 'react';
+import { CategoryItem, ClassItem} from '@/pages/student-dashboard';
 
 const DEFAULT_GRADING_SCHEME: Record<string, string> = {
     "A": "94-100",

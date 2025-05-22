@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import {useState } from "react"
 import { User } from "lucide-react"
 import {
   DropdownMenu,
@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { SettingsModal } from "../modals/settings-modal"
 import type { UserProfile } from "../pages/student-dashboard"
-import { on } from "events"
 
 interface AccountMenuProps {
   userProfile: UserProfile
