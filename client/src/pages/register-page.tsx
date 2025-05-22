@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function RegisterPage() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const [formData, setFormData] = useState({
       email: "",
       password: "",
@@ -30,7 +31,7 @@ export default function RegisterPage() {
   const addStudent = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/addStudent",
+        `${API_BASE_URL}/api/addStudent`,
         {
           method: "POST",
           headers: {

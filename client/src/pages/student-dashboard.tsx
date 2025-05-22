@@ -67,7 +67,7 @@ export type UserProfile = {
   pessimisticGPA?: number | 0
 }
 export default function StudentDashboard() {
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const { userID } = useAuth();
   const [classes, setClasses] = useState<ClassItem[]>([])
   const navigate = useNavigate()
@@ -119,12 +119,12 @@ export default function StudentDashboard() {
     }
     
     try {
-      const profileResponse = await fetch(`http://localhost:8080/api/findStudent/${userID}`);
+      const profileResponse = await fetch(`${API_BASE_URL}/api/findStudent/${userID}`);
       if (!profileResponse.ok) {
         throw new Error("Failed to fetch student profile");
       }
       const profileData = await profileResponse.json();
-      const classesResponse = await fetch(`http://localhost:8080/api/classes/${userID}`);
+      const classesResponse = await fetch(`${API_BASE_URL}/api/classes/${userID}`);
       if (!classesResponse.ok) {
         throw new Error("Failed to fetch classes");
       }
@@ -151,7 +151,7 @@ export default function StudentDashboard() {
   
   const handleUpdateClass = async (updatedClass:ClassItem) => {
   try{
-    const response = await fetch(`http://localhost:8080/api/classes/${updatedClass.id}/update`, {
+    const response = await fetch(`${API_BASE_URL}/api/classes/${updatedClass.id}/update`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedClass),
@@ -160,7 +160,7 @@ export default function StudentDashboard() {
     if (!response.ok) {
       throw new Error("Failed to update class.")
     }
-    const classesResponse = await fetch(`http://localhost:8080/api/classes/${userID}`);
+    const classesResponse = await fetch(`${API_BASE_URL}/api/classes/${userID}`);
       if (!classesResponse.ok) {
         throw new Error("Failed to fetch updated classes");
       }
