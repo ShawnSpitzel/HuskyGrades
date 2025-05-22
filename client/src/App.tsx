@@ -11,6 +11,7 @@ export default function Home() {
     <div className="">
         <AuthProvider>
         <Routes>
+        <Route index element={<StudentDashboard />}/>
         <Route path="/login" element={<LoginPage/>}> </Route>
           <Route path="/dashboard" element={<StudentDashboard />}> </Route>
           <Route path="/register" element={<RegisterPage />}> </Route>
