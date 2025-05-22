@@ -42,6 +42,7 @@ export function AddClassDialog({
   onOpenChange,
   onAddClass,
 }: AddClassDialogProps) {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const auth = useAuth();
   const userID = localStorage.getItem("userID")
     ? JSON.parse(localStorage.getItem("userID")!)
@@ -66,7 +67,7 @@ export function AddClassDialog({
   const addClass = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/addStudentClass/${userID}`,
+        `${API_BASE_URL}/api/addStudentClass/${userID}`,
         {
           method: "POST",
           headers: {

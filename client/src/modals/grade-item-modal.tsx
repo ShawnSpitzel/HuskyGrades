@@ -36,6 +36,7 @@ export function GradeItemModal({
   onUpdate,
   onDelete,
 }: GradeItemModalProps) {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const [categoryDetails, setCategoryDetails] = useState({
     id: categoryInfo?.id || 0,
     weight: categoryInfo?.weight || 0,
@@ -80,7 +81,7 @@ export function GradeItemModal({
   const handleDeleteGradeItem = async (id: number | undefined) => {
     if (id !== null && id !== undefined) {
       try {
-        const response = await fetch(`http://localhost:8080/api/deleteGrade/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/deleteGrade/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -110,7 +111,7 @@ export function GradeItemModal({
       }
       
       const response = await fetch(
-        `http://localhost:8080/api/grades/${categoryInfo.id}/update`,
+        `${API_BASE_URL}/api/grades/${categoryInfo.id}/update`,
         {
           method: "PUT",
           headers: {
@@ -135,7 +136,7 @@ export function GradeItemModal({
   const addGradeItem = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/addGradeItem/${categoryInfo.id}`,
+        `${API_BASE_URL}/api/addGradeItem/${categoryInfo.id}`,
         {
           method: "POST",
           headers: {

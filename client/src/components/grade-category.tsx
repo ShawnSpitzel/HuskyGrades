@@ -16,6 +16,7 @@ interface GradeCategoryProps {
 }
 
 export function GradeCategory({ categoryInfo, onUpdate, onDelete}: GradeCategoryProps) {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const [isOpen, setIsOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState<GradeItem | null>(null);
@@ -56,7 +57,7 @@ export function GradeCategory({ categoryInfo, onUpdate, onDelete}: GradeCategory
   const handleDeleteCategory = async (id: number | undefined) => {
     if (id !== null) {
       try {
-        const response = await fetch(`http://localhost:8080/api/deleteGradeCategory/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/deleteGradeCategory/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -74,7 +75,7 @@ export function GradeCategory({ categoryInfo, onUpdate, onDelete}: GradeCategory
 
   const fetchGradeItems = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/gradesById/${categoryInfo.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/gradesById/${categoryInfo.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -128,7 +129,7 @@ export function GradeCategory({ categoryInfo, onUpdate, onDelete}: GradeCategory
   const updateGradeItems = async (updatedItems: GradeItem[]) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/grades/${categoryInfo.id}/update`,
+        `${API_BASE_URL}/api/grades/${categoryInfo.id}/update`,
         {
           method: "PUT",
           headers: {

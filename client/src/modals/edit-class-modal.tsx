@@ -32,6 +32,7 @@ export function EditClassModal({
   onOpenChange,
   onUpdateClass = () => {},
 }: EditClassModalProps) {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [isSyllabusModalOpen, setIsSyllabusModalOpen] = useState(false);
   const [classDetails, setClassDetails] = useState({
@@ -127,7 +128,7 @@ export function EditClassModal({
   const fetchCategories = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/gradeCategory/${classInfo.id}`
+        `${API_BASE_URL}/api/gradeCategory/${classInfo.id}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -149,7 +150,7 @@ export function EditClassModal({
   }, [open]);
 
   const updateClass = () => {
-    return fetch(`http://localhost:8080/api/classes/${classInfo.id}/update`, {
+    return fetch(`${API_BASE_URL}/api/classes/${classInfo.id}/update`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(classDetails),
@@ -160,7 +161,7 @@ export function EditClassModal({
   };
 
   const updateCategories = () => {
-    return fetch(`http://localhost:8080/api/gradeCategory/${classInfo.id}/update`, {
+    return fetch(`${API_BASE_URL}/api/gradeCategory/${classInfo.id}/update`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(classDetails.categories),
@@ -178,7 +179,7 @@ export function EditClassModal({
     
     try {
       const response = await fetch(
-        `http://localhost:8080/api/addGradeCategory/${classInfo.id}`,
+        `${API_BASE_URL}/api/addGradeCategory/${classInfo.id}`,
         {
           method: "POST",
           headers: {

@@ -33,6 +33,7 @@ export function ClassesTable({
   onDeleteClass = () => {},
   onUpdateClass = () => {},
 }: ClassesTableProps) {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const [addClassOpen, setAddClassOpen] = useState(false)
   const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
@@ -48,7 +49,7 @@ export function ClassesTable({
   const handleConfirmDelete = async () => {
     if (classToDelete !== null) {
     try {
-      const response = await fetch(`http://localhost:8080/api/deleteClass/${classToDelete}`, {
+      const response = await fetch(`${API_BASE_URL}/api/deleteClass/${classToDelete}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
