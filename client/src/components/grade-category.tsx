@@ -301,7 +301,7 @@ export function GradeCategory({ categoryInfo, onUpdate, onDelete}: GradeCategory
         </div>
         
         {/* Add single item button */}
-        <Button
+        {/* <Button
           variant="outline"
           size="sm"
           className="mt-2"
@@ -309,7 +309,7 @@ export function GradeCategory({ categoryInfo, onUpdate, onDelete}: GradeCategory
         >
           <Plus className="mr-2 h-4 w-4" />
           Add {categoryInfo.title}
-        </Button>
+        </Button> */}
         </div>
       )}
       </CardHeader>
