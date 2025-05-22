@@ -94,7 +94,7 @@ export function EditClassModal({
       );
       if (index === -1) {
         return prevData;
-      }
+      } 
       const updatedCategories = [...prevData.categories];
       updatedCategories[index] = updatedCategory;
       return {
@@ -108,11 +108,27 @@ export function EditClassModal({
       const grades = GradeCalculations(classDetails);
       const optimisticGrades = OptimisticGradeCalculations(classDetails);
       const pessimisticGrades = PessimisticGradeCalculations(classDetails);
-      const letterGrade = LetterGradeCalculations(classDetails);
-      const optimisticLetterGrade = OptimisticLetterGradeCalculations(classDetails);
-      console.log("Optimistic class letter grade: ", optimisticLetterGrade)
-      const pessimisticLetterGrade = PessimisticLetterGradeCalculations(classDetails);
-      console.log("Pessimistic class letter grade: ", pessimisticLetterGrade)
+      const tempClassDetailsForCurrent = {
+        ...classDetails,
+        currentGrade: grades
+      };
+      
+      const tempClassDetailsForOptimistic = {
+        ...classDetails,
+        predictedOptimistic: optimisticGrades
+      };
+      
+      const tempClassDetailsForPessimistic = {
+        ...classDetails,
+        predictedPessimistic: pessimisticGrades
+      };
+      const letterGrade = LetterGradeCalculations(tempClassDetailsForCurrent);
+      const optimisticLetterGrade = OptimisticLetterGradeCalculations(tempClassDetailsForOptimistic);
+      const pessimisticLetterGrade = PessimisticLetterGradeCalculations(tempClassDetailsForPessimistic);
+      
+      console.log("Optimistic class letter grade: ", optimisticLetterGrade);
+      console.log("Pessimistic class letter grade: ", pessimisticLetterGrade);
+      
       setClassDetails((prev) => ({
         ...prev,
         currentGrade: grades,
