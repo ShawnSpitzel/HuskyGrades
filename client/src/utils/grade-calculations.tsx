@@ -23,13 +23,13 @@ export function GradeCalculations(classInfo: ClassItem) {
 export function OptimisticGradeCalculations(classInfo: ClassItem) {
     const calculatedClassGrade = classInfo.categories.reduce(
         (sum, cat) => sum + (cat.predictedOptimistic * (cat.weight / 100)), 0);
-    return calculatedClassGrade;
+    return Number(calculatedClassGrade.toFixed(2));
 
 }
 export function PessimisticGradeCalculations(classInfo: ClassItem) {
     const calculatedClassGrade = classInfo.categories.reduce(
         (sum, cat) => sum + (cat.predictedPessimistic * (cat.weight / 100)), 0);
-    return calculatedClassGrade;
+    return Number(calculatedClassGrade.toFixed(2));
 
 }
 export function LetterGradeCalculations(classInfo: ClassItem): string {
@@ -62,7 +62,6 @@ export function LetterGradeCalculations(classInfo: ClassItem): string {
         }
       }
     }
-    console.warn("Error calculating grade")
     return "N/A";
   }
   export function OptimisticLetterGradeCalculations(classInfo: ClassItem): string {
@@ -95,7 +94,6 @@ export function LetterGradeCalculations(classInfo: ClassItem): string {
         }
       }
     }
-    console.warn("Error calculating pessimistic letter grade")
     return "N/A";
   }
   export function PessimisticLetterGradeCalculations(classInfo: ClassItem): string {
@@ -128,7 +126,6 @@ export function LetterGradeCalculations(classInfo: ClassItem): string {
         }
       }
     }
-    console.warn("Error calculating optimistic letter grade")
     return "N/A";
   }
   export function CategoryGradeAverage(categoryInfo: CategoryItem): number {
