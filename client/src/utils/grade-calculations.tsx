@@ -252,21 +252,29 @@ export function GPACalculations(classes: ClassItem[]): number {
       return totalGradePoints / totalCredits;
     }
   }
-  export function OptimisticAverageScore(category:CategoryItem){
+  export function OptimisticAverageScore(category:CategoryItem, currentScore:number){
     const newCategory = { ...category };
+    let maxScore = 95;
+    if (currentScore >= maxScore){
+        maxScore = 100;
+    }
     newCategory.items = category.items.map(item => {
         if (item.grade === -1) {
-            return { ...item, grade: 95 };
+            return { ...item, grade: maxScore };
         }
         return { ...item }; 
     });
     return newCategory
   }
-  export function PessimisticAverageScore(category:CategoryItem){
+  export function PessimisticAverageScore(category:CategoryItem, currentScore:number){
     const newCategory = { ...category };
+    let minScore = 45;
+    if (currentScore <= minScore){
+        minScore = 0;
+    }
     newCategory.items = category.items.map(item => {
         if (item.grade === -1) {
-            return { ...item, grade: 45 };
+            return { ...item, grade: minScore};
         }
         return { ...item }; 
     });

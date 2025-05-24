@@ -91,8 +91,8 @@ export function GradeCategory({ categoryInfo, onUpdate, onDelete}: GradeCategory
       };
       setCategoryDetails(updatedCategory);
       const newAverage = CategoryGradeAverage(updatedCategory);
-      const optimisticCategory = OptimisticAverageScore(updatedCategory);
-      const pessimisticCategory = PessimisticAverageScore(updatedCategory);
+      const optimisticCategory = OptimisticAverageScore(updatedCategory, newAverage);
+      const pessimisticCategory = PessimisticAverageScore(updatedCategory, newAverage);
       const optimisticAverage = CategoryGradeAverage(optimisticCategory)
       const pessimisticAverage = CategoryGradeAverage(pessimisticCategory);
       const finalUpdatedCategory = {
