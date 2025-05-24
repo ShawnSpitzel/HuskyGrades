@@ -55,7 +55,6 @@ export function LetterGradeCalculations(classInfo: ClassItem): string {
         const upperBound = Number(upperBoundStr);
         if (!isNaN(lowerBound) && !isNaN(upperBound)) {
           if (currentGrade >= lowerBound && currentGrade <= upperBound) {
-            console.log("Class letter grade: ", letterGrade)
             return letterGrade;
           }
         } else {
@@ -89,7 +88,6 @@ export function LetterGradeCalculations(classInfo: ClassItem): string {
         const upperBound = Number(upperBoundStr);
         if (!isNaN(lowerBound) && !isNaN(upperBound)) {
           if (currentGrade >= lowerBound && currentGrade <= upperBound) {
-            console.log("Optimistic class letter grade: ", letterGrade)
             return letterGrade;
           }
         } else {

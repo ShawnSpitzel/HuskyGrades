@@ -134,7 +134,7 @@ export function EditClassModal({
         predictedOptimisticLetterGrade: optimisticLetterGrade,
         predictedPessimisticLetterGrade: pessimisticLetterGrade
       }));
-    }
+    };
   }, [classDetails.categories]);
 
   const fetchCategories = async () => {
