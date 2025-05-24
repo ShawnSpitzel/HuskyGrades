@@ -257,6 +257,7 @@ export function GPACalculations(classes: ClassItem[]): number {
     let maxScore = 95;
     if (currentScore >= maxScore){
         maxScore = 100;
+        console.log("max score")
     }
     newCategory.items = category.items.map(item => {
         if (item.grade === -1) {
