@@ -23,13 +23,13 @@ export function GradeCalculations(classInfo: ClassItem) {
 export function OptimisticGradeCalculations(classInfo: ClassItem) {
     const calculatedClassGrade = classInfo.categories.reduce(
         (sum, cat) => sum + (cat.predictedOptimistic * (cat.weight / 100)), 0);
-    return Number(calculatedClassGrade.toFixed(2));
+    return Number(calculatedClassGrade.toFixed(1));
 
 }
 export function PessimisticGradeCalculations(classInfo: ClassItem) {
     const calculatedClassGrade = classInfo.categories.reduce(
         (sum, cat) => sum + (cat.predictedPessimistic * (cat.weight / 100)), 0);
-    return Number(calculatedClassGrade.toFixed(2));
+    return Number(calculatedClassGrade.toFixed(1));
 
 }
 export function LetterGradeCalculations(classInfo: ClassItem): string {
